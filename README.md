@@ -2,7 +2,7 @@
 
 An interactive companion to the **Toothpick Challenge** activity for BIOL 200. Students break toothpicks with each hand, time their trials, and use this page to calculate — and actually *see* — standard deviation, standard error, and confidence intervals, instead of just plugging numbers into a formula.
 
-**Live page:** _add your GitHub Pages link here once it's set up_
+**Live page:** [Exploring Confidence Intervals with a Toothpick Experiment](https://lizferguson5.github.io/exploring-confidence-intervals/)
 
 ---
 

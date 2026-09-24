@@ -13,8 +13,6 @@ This repo also includes **`Toothpick_Interactive_Companion.docx`** — a Word do
 - **Teacher Guide** — how to run the activity, section-by-section notes, and discussion points / expected answers for every question.
 - **Student Questions** — instructions and questions numbered to match the six sections in the tool, ready to paste into Canvas or hand out directly.
 
-If you don't see it in this repo yet, it's coming — check back, or ask whoever set up this page.
-
 ---
 
 ## What's in this repo

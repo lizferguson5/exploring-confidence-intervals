@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Toothpick Challenge — Interactive Worksheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3F5F4; --panel:#FFFFFF; --ink:#1B2430; --muted:#5B6672; --line:#D8DEE0;
+    --navy:#1F4E79; --navy-dim:#33648f;
+    --dominant:#3E7CB1; --dominant-fill:#DCEBF6;
+    --nondom:#4F9E6E; --nondom-fill:#E1F1E5;
+    --amber:#C9822E; --amber-fill:#F4E1C4;
+    --good:#3C8A5B; --good-fill:#E3F3E9;
+    --bad:#B24242; --bad-fill:#F7E4E4;
+    --radius:14px;
+    color-scheme: light;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#161A1F; --panel:#1E242B; --ink:#E7EBEE; --muted:#9AA6B1; --line:#333C45;
+      --navy:#8FC0EA; --navy-dim:#6FA6D6;
+      --dominant:#6FA9D8; --dominant-fill:#213241;
+      --nondom:#79C99A; --nondom-fill:#1F3327;
+      --amber:#E0A050; --amber-fill:#3A2E1A;
+      --good:#7FCE9E; --good-fill:#1E3327;
+      --bad:#E08080; --bad-fill:#3A2323;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#161A1F; --panel:#1E242B; --ink:#E7EBEE; --muted:#9AA6B1; --line:#333C45;
+    --navy:#8FC0EA; --navy-dim:#6FA6D6;
+    --dominant:#6FA9D8; --dominant-fill:#213241;
+    --nondom:#79C99A; --nondom-fill:#1F3327;
+    --amber:#E0A050; --amber-fill:#3A2E1A;
+    --good:#7FCE9E; --good-fill:#1E3327;
+    --bad:#E08080; --bad-fill:#3A2323;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top: env(safe-area-inset-top, 0px);}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--paper);
+    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 28px 28px; background-attachment: fixed;
+    color:var(--ink); font-family:'Inter',system-ui,sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--navy);}
+  .wrap{max-width:860px;margin:0 auto;padding:36px 20px 90px;}
+  header.hero{padding:8px 0 26px;border-bottom:1px solid var(--line);margin-bottom:28px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:.02em;margin:0 0 10px;}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(26px,5vw,38px);line-height:1.1;margin:0 0 14px;color:var(--navy);}
+  .hero p{max-width:60ch;color:var(--muted);font-size:16px;margin:0 0 10px;}
+  .experiment-box{
+    max-width:60ch;margin-top:14px;padding:14px 16px;border-radius:10px;
+    background:var(--dominant-fill);border:1px solid color-mix(in srgb, var(--dominant) 35%, var(--line));
+  }
+  .experiment-box .tag{display:block;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--dominant);font-weight:600;letter-spacing:.02em;margin-bottom:5px;}
+  .experiment-box p{margin:0;font-size:14.5px;color:var(--ink);max-width:none;}
+  h2{font-family:'Fraunces',serif;font-weight:600;font-size:23px;color:var(--navy);margin:0 0 6px;display:flex;align-items:center;gap:12px;}
+  .secnum{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:34px;height:34px;border-radius:50%;flex:none;
+    background:var(--navy);color:#fff;font-family:'IBM Plex Mono',monospace;
+    font-size:16px;font-weight:600;
+  }
+  .secnum.small{width:22px;height:22px;font-size:12px;}
+  .section-nav{
+    display:flex;flex-wrap:wrap;gap:8px 10px;margin-bottom:28px;
+  }
+  .section-nav a{
+    display:inline-flex;align-items:center;gap:7px;
+    background:var(--panel);border:1px solid var(--line);border-radius:20px;
+    padding:6px 14px 6px 6px;font-size:13px;color:var(--ink);text-decoration:none;
+  }
+  .section-nav a:hover{border-color:var(--navy-dim);}
+  h3{font-size:16px;margin:0 0 4px;}
+  .section{margin-bottom:48px;}
+  .section > p.lede{color:var(--muted);max-width:62ch;margin:0 0 18px;font-size:15px;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;}
+  .num{font-family:'IBM Plex Mono',monospace;}
+
+  .explain-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:8px;}
+  @media(min-width:680px){.explain-grid{grid-template-columns:1fr 1fr 1fr;}}
+  .explain-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;}
+  .explain-card .tag{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--muted);margin-bottom:6px;}
+  .explain-card p{margin:0;font-size:14.5px;color:var(--ink);}
+
+  .global-controls{
+    display:flex;flex-wrap:wrap;gap:16px 26px;align-items:flex-end;
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;margin-bottom:26px;position:relative;
+  }
+  .field{display:flex;flex-direction:column;gap:6px;min-width:140px;}
+  .field label{font-size:12.5px;color:var(--muted);font-weight:600;}
+  select, input[type=number], input[type=text]{
+    font-family:'IBM Plex Mono',monospace;font-size:15px;padding:8px 10px;border-radius:9px;
+    border:1px solid var(--line);background:var(--paper);color:var(--ink);
+  }
+  input[type=range]{width:100%;accent-color:var(--navy);}
+  .slider-row{display:flex;align-items:center;gap:12px;}
+  .slider-row output{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--navy);min-width:26px;text-align:right;}
+  .toggle-field{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-left:auto;}
+  .toggle-field input{accent-color:var(--navy);width:16px;height:16px;}
+
+  svg{display:block;width:100%;height:auto;}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 20px;font-size:13px;color:var(--muted);margin-top:12px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+  .legend svg{display:inline-block;width:16px;height:4px;flex:none;vertical-align:middle;}
+  .multiplier-callout{
+    margin-top:16px;padding:16px 18px;border-radius:10px;background:var(--amber-fill);
+    border:1px solid color-mix(in srgb, var(--amber) 40%, var(--line));font-size:15px;
+  }
+  .multiplier-callout .big{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;color:var(--amber);}
+  .tech-note{margin-top:10px;font-size:13.5px;color:var(--muted);}
+
+  .handgrid{display:grid;grid-template-columns:1fr;gap:22px;}
+  @media(min-width:720px){.handgrid{grid-template-columns:1fr 1fr;}}
+  .hand-card{border-radius:12px;padding:16px 16px 18px;border:1px solid var(--line);}
+  .hand-card.dominant{background:var(--dominant-fill);}
+  .hand-card.nondom{background:var(--nondom-fill);}
+  .hand-card h3.htitle{font-family:'Inter';font-weight:700;}
+  .hand-card.dominant h3.htitle{color:var(--dominant);}
+  .hand-card.nondom h3.htitle{color:var(--nondom);}
+  .trial-inputs{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px;}
+  .trial-inputs .ti{display:flex;flex-direction:column;gap:3px;width:64px;}
+  .trial-inputs .ti label{font-size:10.5px;color:var(--muted);}
+  .trial-inputs input{width:100%;padding:6px 7px;font-size:14px;}
+
+  table.calc{width:100%;border-collapse:collapse;margin:10px 0 14px;font-size:13.5px;}
+  table.calc th, table.calc td{border:1px solid var(--line);padding:5px 6px;text-align:center;font-family:'IBM Plex Mono',monospace;}
+  table.calc th{background:transparent;font-family:'Inter';font-weight:600;font-size:11.5px;color:var(--muted);}
+  table.calc input{width:56px;padding:3px 4px;font-size:13px;text-align:center;}
+  td.ok{background:var(--good-fill);}
+  td.bad{background:var(--bad-fill);}
+
+  .fill-blank{width:110px;display:inline-block;}
+  .formula-line{font-family:'IBM Plex Mono',monospace;font-size:14px;margin:8px 0 4px;}
+  .formula-line .lab{font-family:'Inter';color:var(--muted);margin-right:4px;}
+  .answer-row{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap;}
+  .answer-row input{width:100px;}
+  .answer-row .status{font-size:13px;min-width:90px;}
+  .status.ok{color:var(--good);font-weight:600;}
+  .status.bad{color:var(--bad);}
+  .reveal-btn{
+    margin-top:10px;background:none;border:1px solid var(--navy-dim);color:var(--navy-dim);
+    padding:6px 12px;border-radius:16px;font-size:12.5px;font-family:'Inter';font-weight:600;cursor:pointer;
+  }
+  .reveal-btn:hover{background:var(--navy-dim);color:var(--panel);}
+  .ci-result{margin-top:10px;padding:10px 12px;border-radius:9px;background:var(--panel);border:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;}
+
+  .concept-box{background:#FBF7EE;border:1px solid var(--line);border-radius:12px;padding:18px;}
+  :root[data-theme="dark"] .concept-box{background:#26211a;}
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .concept-box{background:#26211a;}
+  }
+  .concept-grid{display:grid;grid-template-columns:1fr;gap:20px;}
+  @media(min-width:680px){.concept-grid{grid-template-columns:1fr 1fr;}}
+  .computed-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:6px;}
+  .computed-field{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:120px;}
+  .computed-field .k{display:block;font-size:11px;color:var(--muted);margin-bottom:2px;}
+  .computed-field .v{display:block;font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:600;color:var(--navy);}
+
+  .word-select{font-family:'IBM Plex Mono',monospace;font-size:14px;padding:4px 6px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);}
+  .sentence{font-size:15px;line-height:2.1;}
+  .sentence-block{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px;}
+  .sentence-block .tag{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+
+  .numberline-wrap{margin-top:8px;}
+  .overlap-note{font-size:14px;margin-top:8px;padding:9px 12px;border-radius:9px;}
+  .overlap-note.yes{background:var(--amber-fill);color:var(--ink);}
+  .overlap-note.no{background:var(--nondom-fill);color:var(--ink);}
+
+  table.ttable{width:100%;border-collapse:collapse;font-size:13px;}
+  table.ttable th, table.ttable td{border:1px solid var(--line);padding:6px 5px;text-align:center;font-family:'IBM Plex Mono',monospace;}
+  table.ttable th{font-family:'Inter';font-weight:700;color:var(--navy);background:var(--paper);}
+  table.ttable td.dfcell{font-family:'Inter';font-weight:600;color:var(--muted);}
+  table.ttable tr.match td{background:var(--amber-fill);}
+  table.ttable td.match-col{outline:2px solid var(--amber);outline-offset:-2px;}
+  .ttable-scroll{overflow-x:auto;}
+  .show-all-row{margin-top:12px;}
+
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;}
+  .theme-toggle{
+    position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;
+    background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:6px 12px;
+    font-size:12px;font-family:'Inter';color:var(--muted);cursor:pointer;z-index:5;
+  }
+  ::selection{background:var(--amber-fill);}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">Dark mode</button>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Toothpick Challenge · interactive worksheet</p>
+    <h1>How sure are we about an average?</h1>
+    <p>Every time you measure something, you get a slightly different number by chance. Your average of 5 trials is your best guess at the truth, but it is not exact. This page helps you see how much to trust it, using your own toothpick data.</p>
+    <div class="experiment-box">
+      <span class="tag">The experiment, in one line</span>
+      <p>Break 20 toothpicks one at a time, timing yourself in seconds — do this 5 times with your dominant hand and 5 times with your non-dominant hand. Those 10 numbers are the "trial data" this whole page uses.</p>
+    </div>
+  </header>
+
+  <nav class="section-nav" aria-label="Jump to section">
+    <a href="#distribution"><span class="secnum small">1</span>Shape of uncertainty</a>
+    <a href="#simulation"><span class="secnum small">2</span>Where it comes from</a>
+    <a href="#part1"><span class="secnum small">3</span>Your data</a>
+    <a href="#part2"><span class="secnum small">4</span>Key concepts</a>
+    <a href="#part3"><span class="secnum small">5</span>Calculate</a>
+    <a href="#part4"><span class="secnum small">6</span>In your own words</a>
+  </nav>
+
+  <section class="section" id="intro">
+    <h2>Three ideas, in plain language</h2>
+    <p class="lede">You will use three numbers throughout this activity. Here is what each one is really asking.</p>
+    <div class="explain-grid">
+      <div class="explain-card">
+        <div class="tag">SPREAD (SD)</div>
+        <p>How different your 5 trials were from each other. Big spread means your times bounced around a lot.</p>
+      </div>
+      <div class="explain-card">
+        <div class="tag">PRECISION (SEM)</div>
+        <p>How much you would expect your <em>average</em> to change if you ran the whole experiment again. More trials shrinks this number.</p>
+      </div>
+      <div class="explain-card">
+        <div class="tag">CONFIDENCE INTERVAL</div>
+        <p>A range around your average that probably contains the real, true average — not just the one you happened to measure.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="controls-section">
+    <div class="global-controls">
+      <div class="field">
+        <label for="nInput">Number of trials per hand (n)</label>
+        <input type="number" id="nInput" min="2" max="15" value="5" style="width:80px;">
+      </div>
+      <div class="field">
+        <label for="confSelect">Confidence level</label>
+        <select id="confSelect">
+          <option value="90">90%</option>
+          <option value="95" selected>95%</option>
+          <option value="99">99%</option>
+        </select>
+      </div>
+      <label class="toggle-field"><input type="checkbox" id="techToggle"> Show statistics terms (t, z, df) — for teachers</label>
+    </div>
+  </section>
+
+  <section class="section" id="distribution">
+    <h2><span class="secnum">1</span>The shape of uncertainty</h2>
+    <p class="lede">This curve shows every average you might reasonably get by chance. Watch what happens to it as the number of trials (n, set above) changes.</p>
+    <div class="panel">
+      <svg id="chart" viewBox="0 0 680 300" role="img" aria-label="Curve showing the range of plausible averages"></svg>
+      <div class="legend" id="legendRow">
+        <span><span style="width:14px;height:3px;border-radius:2px;background:var(--navy);display:inline-block;"></span> your curve (n trials)</span>
+        <span><span style="width:14px;height:8px;border-radius:2px;background:var(--dominant-fill);border:1px solid var(--dominant);display:inline-block;"></span> the middle <span id="legLevel">95</span>%</span>
+      </div>
+      <div class="multiplier-callout" id="multBox"></div>
+      <div id="techArea"></div>
+    </div>
+  </section>
+
+  <section class="section" id="simulation">
+    <h2><span class="secnum">2</span>Where does this curve actually come from?</h2>
+    <p class="lede">It is not just a formula. Imagine a world where the two hands are exactly identical, and you ran the toothpick trial thousands of separate times with n trials each. Every time, chance alone gives you a slightly different average. Simulate that below and watch the bars trace out the same curve as above.</p>
+    <div class="panel">
+      <button class="reveal-btn" id="simBtn" type="button">Simulate 4,000 virtual groups</button>
+      <svg id="simChart" viewBox="0 0 680 220" role="img" aria-label="Histogram of simulated sample averages" style="margin-top:14px;display:none;"></svg>
+      <p class="tech-note" id="simNote" style="display:none;"></p>
+    </div>
+  </section>
+
+  <section class="section" id="part1">
+    <h2><span class="secnum">3</span>Part 1 — Your Data</h2>
+    <p class="lede">Enter your group’s trial times below (or the class values from the board). Everything on this page updates from these numbers.</p>
+    <button class="reveal-btn" id="clearDataBtn" type="button" style="margin-bottom:14px;">Clear all trial data</button>
+    <button class="reveal-btn" id="loadSampleBtn" type="button" style="margin-bottom:14px;margin-left:10px;">Load sample data</button>
+    <div class="panel">
+      <div class="handgrid">
+        <div class="hand-card dominant">
+          <h3 class="htitle">Dominant hand</h3>
+          <div class="trial-inputs" id="domInputs"></div>
+        </div>
+        <div class="hand-card nondom">
+          <h3 class="htitle">Non-dominant hand</h3>
+          <div class="trial-inputs" id="nondomInputs"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="part2">
+    <h2><span class="secnum">4</span>Part 2 — Two Key Concepts</h2>
+    <p class="lede">Two quick checks before you calculate anything — using your own trial times from Part 1, above.</p>
+    <div class="concept-box">
+      <div class="concept-grid">
+        <div>
+          <h3>Concept A — Why square the deviations?</h3>
+          <p style="font-size:14px;">Uses your dominant-hand trials from Part 1, above. Deviations always sum to zero — that is why we square them before adding.</p>
+          <div id="conceptA"></div>
+        </div>
+        <div>
+          <h3>Concept B — Why divide by n − 1?</h3>
+          <p style="font-size:14px;">Uses your non-dominant-hand trials from Part 1, above. Once you know the mean and all but one value, the last one is locked in — it has no freedom left.</p>
+          <div id="conceptB"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="part3">
+    <h2><span class="secnum">5</span>Part 3 — Calculate Your Statistics</h2>
+    <p class="lede">Now use your own data from Part 1. Fill in each blank yourself — the page will tell you if you are right.</p>
+    <div class="panel">
+      <div class="handgrid">
+        <div class="hand-card dominant">
+          <h3 class="htitle">Dominant hand</h3>
+          <div id="domCalc"></div>
+        </div>
+        <div class="hand-card nondom">
+          <h3 class="htitle">Non-dominant hand</h3>
+          <div id="nondomCalc"></div>
+        </div>
+      </div>
+
+      <div class="numberline-wrap">
+        <h3 style="margin:24px 0 4px;">Do the two hands really differ?</h3>
+        <svg id="numberline" viewBox="0 0 680 150" role="img" aria-label="Confidence intervals for both hands on a number line"></svg>
+        <div id="overlapNote"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="part4">
+    <h2><span class="secnum">6</span>Part 4 — In Your Own Words</h2>
+    <p class="lede">Pick the word that best completes each sentence.</p>
+    <div class="panel" id="part4panel"></div>
+  </section>
+
+  <section class="section" id="reference">
+    <h2>Critical value table</h2>
+    <p class="lede">This is the table your worksheet points you to. The highlighted cell matches the n and confidence level you set above.</p>
+    <div class="panel">
+      <div class="ttable-scroll"><table class="ttable" id="ttableEl"></table></div>
+      <div class="show-all-row"><button class="reveal-btn" id="showAllBtn" type="button">Show all rows</button></div>
+    </div>
+  </section>
+
+  <footer>Built for the Toothpick Challenge · interactive worksheet</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- theme ---------- */
+  var themeBtn = document.getElementById("themeToggle");
+  var root = document.documentElement;
+  function applyThemeLabel(){
+    var t = root.getAttribute("data-theme");
+    themeBtn.textContent = (t === "dark") ? "Light mode" : "Dark mode";
+  }
+  themeBtn.addEventListener("click", function(){
+    var cur = root.getAttribute("data-theme");
+    root.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
+    applyThemeLabel();
+  });
+  applyThemeLabel();
+
+  /* ---------- math ---------- */
+  function logGamma(x){
+    var g = 7;
+    var p = [0.99999999999980993,676.5203681218851,-1259.1392167224028,
+      771.32342877765313,-176.61502916214059,12.507343278686905,
+      -0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+    if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - logGamma(1 - x);
+    x -= 1;
+    var a = p[0];
+    var t = x + g + 0.5;
+    for (var i = 1; i < g + 2; i++) a += p[i] / (x + i);
+    return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+  }
+  function tpdf(t, v){
+    var C = Math.exp(logGamma((v + 1) / 2) - logGamma(v / 2)) / Math.sqrt(v * Math.PI);
+    return C * Math.pow(1 + (t * t) / v, -(v + 1) / 2);
+  }
+  function normpdf(t){ return Math.exp(-t*t/2) / Math.sqrt(2*Math.PI); }
+  function tCoverage(v, lo, hi, steps){
+    steps = steps || 700;
+    var dx = (hi-lo)/steps, sum = 0;
+    for (var i=0;i<steps;i++){ var x = lo + dx*(i+0.5); sum += tpdf(x,v)*dx; }
+    return sum;
+  }
+
+  var T_ROWS = [
+    [1,6.314,12.706,63.657],[2,2.920,4.303,9.925],[3,2.353,3.182,5.841],
+    [4,2.132,2.776,4.604],[5,2.015,2.571,4.032],[6,1.943,2.447,3.707],
+    [7,1.895,2.365,3.499],[8,1.860,2.306,3.355],[9,1.833,2.262,3.250],
+    [10,1.812,2.228,3.169],[11,1.796,2.201,3.106],[12,1.782,2.179,3.055],
+    [13,1.771,2.160,3.012],[14,1.761,2.145,2.977],[15,1.753,2.131,2.947],
+    [16,1.746,2.120,2.921],[17,1.740,2.110,2.898],[18,1.734,2.101,2.878],
+    [19,1.729,2.093,2.861],[20,1.725,2.086,2.845],[21,1.721,2.080,2.831],
+    [22,1.717,2.074,2.819],[23,1.714,2.069,2.807],[24,1.711,2.064,2.797],
+    [25,1.708,2.060,2.787],[26,1.706,2.056,2.779],[27,1.703,2.052,2.771],
+    [28,1.701,2.048,2.763],[29,1.699,2.045,2.756],[30,1.697,2.042,2.750],
+    [40,1.684,2.021,2.704],[60,1.671,2.000,2.660],[120,1.658,1.980,2.617],
+    [100000,1.645,1.960,2.576]
+  ];
+  var COL = {90:1,95:2,99:3};
+  function tStar(df, level){
+    var c = COL[level];
+    if (df <= T_ROWS[0][0]) return T_ROWS[0][c];
+    for (var i=0;i<T_ROWS.length-1;i++){
+      var a=T_ROWS[i], b=T_ROWS[i+1];
+      if (df >= a[0] && df <= b[0]){
+        if (df===a[0]) return a[c];
+        if (df===b[0]) return b[c];
+        var fa=1/a[0], fb=1/b[0], fx=1/df;
+        var frac=(fx-fa)/(fb-fa);
+        return a[c] + frac*(b[c]-a[c]);
+      }
+    }
+    return T_ROWS[T_ROWS.length-1][c];
+  }
+  var Z = {90:1.645, 95:1.960, 99:2.576};
+
+  /* ---------- state ---------- */
+  var state = { n: 5, level: 95, tech: false };
+  var nInput = document.getElementById("nInput");
+  var confSelect = document.getElementById("confSelect");
+  var techToggle = document.getElementById("techToggle");
+
+  nInput.addEventListener("input", function(){
+    var v = parseInt(nInput.value,10);
+    if (isNaN(v)) return;
+    if (v<2) v=2; if (v>15) v=15;
+    state.n = v;
+    onNChange();
+  });
+  confSelect.addEventListener("change", function(){
+    state.level = parseInt(confSelect.value,10);
+    document.getElementById("legLevel").textContent = state.level;
+    drawChart(); runPart3(); highlightTable();
+  });
+  techToggle.addEventListener("change", function(){
+    state.tech = techToggle.checked;
+    drawChart();
+  });
+
+  /* ---------- SVG helpers ---------- */
+  var svgNS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs){
+    var e = document.createElementNS(svgNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  /* ---------- distribution chart ---------- */
+  var chart = document.getElementById("chart");
+  var multBox = document.getElementById("multBox");
+  var techArea = document.getElementById("techArea");
+  var CW=680, CH=300, MARGIN={l:34,r:24,t:20,b:34};
+  var PLOT_W=CW-MARGIN.l-MARGIN.r, PLOT_H=CH-MARGIN.t-MARGIN.b;
+  var XMIN=-4.6, XMAX=4.6, YMAX=0.44;
+  function xPix(x){ return MARGIN.l + (x-XMIN)/(XMAX-XMIN)*PLOT_W; }
+  function yPix(y){ return MARGIN.t + (1-y/YMAX)*PLOT_H; }
+  function curvePts(fn, df, steps){
+    var pts=[];
+    for (var i=0;i<=steps;i++){
+      var x = XMIN + (XMAX-XMIN)*i/steps;
+      pts.push([x, df===null?normpdf(x):fn(x,df)]);
+    }
+    return pts;
+  }
+  function ptsToPath(pts){
+    return pts.map(function(p,i){ return (i===0?"M":"L")+xPix(p[0]).toFixed(2)+","+yPix(p[1]).toFixed(2); }).join(" ");
+  }
+  function areaPath(fn, df, a, b, steps){
+    steps = steps||60;
+    var d = "M"+xPix(a).toFixed(2)+","+yPix(0).toFixed(2);
+    for (var i=0;i<=steps;i++){
+      var x = a+(b-a)*i/steps;
+      d += " L"+xPix(x).toFixed(2)+","+yPix(fn(x,df)).toFixed(2);
+    }
+    d += " L"+xPix(b).toFixed(2)+","+yPix(0).toFixed(2)+" Z";
+    return d;
+  }
+
+  function drawChart(){
+    var df = state.n - 1;
+    var level = state.level;
+    var tS = tStar(df, level);
+    var zV = Z[level];
+
+    while (chart.firstChild) chart.removeChild(chart.firstChild);
+
+    var axis = el("line",{x1:xPix(XMIN),x2:xPix(XMAX),y1:yPix(0),y2:yPix(0),stroke:"var(--line)","stroke-width":1});
+    chart.appendChild(axis);
+    [-4,-2,0,2,4].forEach(function(t){
+      chart.appendChild(el("line",{x1:xPix(t),x2:xPix(t),y1:yPix(0),y2:yPix(0)+5,stroke:"var(--muted)","stroke-width":1}));
+      var lab = el("text",{x:xPix(t),y:yPix(0)+18,"text-anchor":"middle","font-size":"11",fill:"var(--muted)","font-family":"IBM Plex Mono, monospace"});
+      lab.textContent = t;
+      chart.appendChild(lab);
+    });
+
+    if (state.tech && tS > zV){
+      [1,-1].forEach(function(sign){
+        var a = sign>0? zV : -tS, b = sign>0? tS : -zV;
+        chart.appendChild(el("path",{d:areaPath(tpdf,df,a,b,40), fill:"var(--amber-fill)", stroke:"var(--amber)","stroke-width":0.75, opacity:0.9}));
+      });
+    }
+    var midEdge = state.tech ? zV : tS;
+    chart.appendChild(el("path",{d:areaPath(tpdf,df,-midEdge,midEdge,90), fill:"var(--dominant-fill)", stroke:"none", opacity:0.85}));
+
+    if (state.tech){
+      var normPath = el("path",{d:ptsToPath(curvePts(null,null,160)), fill:"none", stroke:"var(--muted)","stroke-width":1.6,"stroke-dasharray":"5,4"});
+      chart.appendChild(normPath);
+    }
+    var tPath = el("path",{d:ptsToPath(curvePts(tpdf,df,160)), fill:"none", stroke:"var(--navy)","stroke-width":2.4});
+    chart.appendChild(tPath);
+
+    var T_TOP = YMAX*0.98, Z_TOP = YMAX*0.60;
+    [tS,-tS].forEach(function(x){
+      chart.appendChild(el("line",{x1:xPix(x),x2:xPix(x),y1:yPix(0),y2:yPix(T_TOP), stroke:"var(--navy)","stroke-width":1.4}));
+    });
+    var tOnRight = tS < XMAX-0.6;
+    var lab1 = el("text",{x:xPix(tS)+(tOnRight?5:-5), y:yPix(T_TOP)+4, "text-anchor":tOnRight?"start":"end", "font-size":"12.5", fill:"var(--navy)","font-family":"IBM Plex Mono, monospace","font-weight":"600"});
+    lab1.textContent = state.tech ? ("t* = "+tS.toFixed(3)) : ("×"+tS.toFixed(2));
+    chart.appendChild(lab1);
+
+    if (state.tech){
+      [zV,-zV].forEach(function(x){
+        chart.appendChild(el("line",{x1:xPix(x),x2:xPix(x),y1:yPix(0),y2:yPix(Z_TOP), stroke:"var(--muted)","stroke-width":1.2,"stroke-dasharray":"3,3"}));
+      });
+      var zOnRight = zV < XMAX-0.6;
+      var lab2 = el("text",{x:xPix(zV)+(zOnRight?5:-5), y:yPix(Z_TOP)+4, "text-anchor":zOnRight?"start":"end", "font-size":"11.5", fill:"var(--muted)","font-family":"IBM Plex Mono, monospace"});
+      lab2.textContent = "z* = "+zV.toFixed(3);
+      chart.appendChild(lab2);
+    }
+
+    multBox.innerHTML = "With <b>n = "+state.n+"</b> trials, multiply your SEM by <span class=\"big\">\u00d7"+tS.toFixed(3)+"</span> to build a "+level+"% confidence interval. Fewer trials \u2192 a bigger multiplier \u2192 a wider, more cautious interval.";
+
+    if (state.tech){
+      var tailBeyondZ = 2*tCoverage(df, zV, 6.5, 500);
+      var wouldBeConf = (1-tailBeyondZ)*100;
+      var widen = (tS/zV - 1)*100;
+      techArea.innerHTML =
+        "<div class=\"tech-note\" style=\"display:grid;gap:12px;grid-template-columns:1fr;margin-top:4px;\">"+
+        "<div><b style=\"color:var(--navy);\">t* — the multiplier for YOUR actual sample</b><br>"+
+        "This solid curve is the <b>t-distribution</b>. It describes the spread of averages you would get from a sample of exactly your size, <b>df = n \u2212 1 = "+df+"</b>. Its multiplier, <b>t* = "+tS.toFixed(3)+"</b>, already accounts for the extra uncertainty of only having "+state.n+" trials.</div>"+
+        "<div><b style=\"color:var(--muted);\">z* — the multiplier for an impossibly huge sample</b><br>"+
+        "The dashed curve is the <b>normal distribution</b> \u2014 what your data would look like if you had a gigantic (technically, infinite) number of trials, so there was no leftover uncertainty about the spread at all. Its multiplier, <b>z* = "+zV.toFixed(3)+"</b>, is smaller because it does not need to cover for a small sample. Nobody actually has infinite trials \u2014 z* is just the reference point t* is compared against.</div>"+
+        "<div>If you used z* here instead of the correct t*, you would really only be <b>"+wouldBeConf.toFixed(1)+"%</b> confident, not "+level+"%. Using t* instead makes the interval <b>"+widen.toFixed(0)+"%</b> wider \u2014 the honest cost of a small sample. As n grows, t* moves closer to z*, until eventually they are almost the same number.</div>"+
+        "</div>";
+    } else {
+      techArea.innerHTML = "";
+    }
+  }
+
+  /* ---------- simulation: where the curve comes from ---------- */
+  var simBtn = document.getElementById("simBtn");
+  var simChart = document.getElementById("simChart");
+  var simNote = document.getElementById("simNote");
+  var simHasRun = false;
+
+  function randNormal(){
+    var u = 1 - Math.random(), v = Math.random();
+    return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
+  }
+  function simulateTs(n, trials){
+    var out = [];
+    for (var k=0;k<trials;k++){
+      var sample = [];
+      for (var i=0;i<n;i++) sample.push(randNormal());
+      var mean = sample.reduce(function(a,b){return a+b;},0)/n;
+      var variance = sample.reduce(function(a,b){return a+(b-mean)*(b-mean);},0)/(n-1);
+      var sd = Math.sqrt(variance);
+      var sem = sd/Math.sqrt(n);
+      out.push(mean/sem);
+    }
+    return out;
+  }
+
+  function drawSimChart(){
+    var n = state.n;
+    var df = n - 1;
+    var trials = 4000;
+    var ts = simulateTs(n, trials);
+
+    while (simChart.firstChild) simChart.removeChild(simChart.firstChild);
+    simChart.style.display = "block";
+    simNote.style.display = "block";
+
+    var SW=680, SH=220, SM={l:34,r:24,t:14,b:34};
+    var SPW=SW-SM.l-SM.r, SPH=SH-SM.t-SM.b;
+    var SXMIN=-5, SXMAX=5;
+    function sx(x){ return SM.l + (x-SXMIN)/(SXMAX-SXMIN)*SPW; }
+
+    var nbins = 46;
+    var binw = (SXMAX-SXMIN)/nbins;
+    var counts = new Array(nbins).fill(0);
+    var clipped = 0;
+    ts.forEach(function(t){
+      if (t < SXMIN || t >= SXMAX){ clipped++; return; }
+      var idx = Math.floor((t-SXMIN)/binw);
+      counts[idx]++;
+    });
+    var maxDensity = 0;
+    var densities = counts.map(function(c){ var d = c/(trials*binw); if (d>maxDensity) maxDensity=d; return d; });
+    var yMaxSim = Math.max(maxDensity*1.15, 0.42);
+    function sy(y){ return SM.t + (1 - y/yMaxSim)*SPH; }
+
+    simChart.appendChild(el("line",{x1:sx(SXMIN),x2:sx(SXMAX),y1:sy(0),y2:sy(0),stroke:"var(--line)","stroke-width":1}));
+    [-4,-2,0,2,4].forEach(function(t){
+      simChart.appendChild(el("line",{x1:sx(t),x2:sx(t),y1:sy(0),y2:sy(0)+5,stroke:"var(--muted)","stroke-width":1}));
+      var lab = el("text",{x:sx(t),y:sy(0)+18,"text-anchor":"middle","font-size":"11",fill:"var(--muted)","font-family":"IBM Plex Mono, monospace"});
+      lab.textContent = t;
+      simChart.appendChild(lab);
+    });
+
+    for (var i=0;i<nbins;i++){
+      var x0 = SXMIN + i*binw, x1v = x0+binw;
+      var barH = sy(0) - sy(densities[i]);
+      if (barH < 0.3) continue;
+      simChart.appendChild(el("rect",{
+        x: sx(x0).toFixed(2), y: sy(densities[i]).toFixed(2),
+        width: Math.max(0.5, sx(x1v)-sx(x0)-1).toFixed(2), height: barH.toFixed(2),
+        fill:"var(--nondom)", opacity:0.55
+      }));
+    }
+
+    var theoPts = [];
+    for (var j=0;j<=160;j++){
+      var xx = SXMIN + (SXMAX-SXMIN)*j/160;
+      theoPts.push([xx, tpdf(xx, df)]);
+    }
+    var theoPath = theoPts.map(function(p,i2){ return (i2===0?"M":"L")+sx(p[0]).toFixed(2)+","+sy(p[1]).toFixed(2); }).join(" ");
+    simChart.appendChild(el("path",{d:theoPath, fill:"none", stroke:"var(--navy)","stroke-width":2.2}));
+
+    simNote.innerHTML = "Green bars: the t-value from "+trials.toLocaleString()+" randomly simulated groups of n = "+n+" (with no real difference built in). Navy line: the theoretical curve from above. They land on top of each other \u2014 that curve is not arbitrary, it is what pure chance actually produces.";
+  }
+
+  simBtn.addEventListener("click", function(){ simHasRun = true; drawSimChart(); });
+
+
+  var domInputsEl = document.getElementById("domInputs");
+  var nondomInputsEl = document.getElementById("nondomInputs");
+  var DEMO_DOM = [30,35,32,28,35,31,33,29,34,30,32,31,29,33,30];
+  var DEMO_NON = [38,34,41,36,40,37,39,35,38,36,39,37,35,40,36];
+  var dataCleared = false;
+
+  function buildInputs(container, n, defaults, prefix){
+    container.innerHTML = "";
+    for (var i=0;i<n;i++){
+      var wrap = document.createElement("div");
+      wrap.className = "ti";
+      var lab = document.createElement("label");
+      lab.textContent = "Trial "+(i+1);
+      lab.setAttribute("for", prefix+i);
+      var inp = document.createElement("input");
+      inp.type = "number"; inp.step = "any"; inp.id = prefix+i;
+      if (defaults && defaults[i] !== undefined) inp.value = defaults[i];
+      inp.addEventListener("input", function(){
+        runPart3();
+        buildConceptA();
+        buildConceptB();
+      });
+      wrap.appendChild(lab); wrap.appendChild(inp);
+      container.appendChild(wrap);
+    }
+  }
+  function readValues(n, prefix){
+    var out = [];
+    for (var i=0;i<n;i++){
+      var e = document.getElementById(prefix+i);
+      var v = e ? parseFloat(e.value) : NaN;
+      if (!isNaN(v)) out.push(v);
+    }
+    return out;
+  }
+
+  function onNChange(){
+    buildInputs(domInputsEl, state.n, dataCleared ? null : DEMO_DOM, "dom");
+    buildInputs(nondomInputsEl, state.n, dataCleared ? null : DEMO_NON, "non");
+    drawChart();
+    runPart3();
+    buildConceptA();
+    buildConceptB();
+    buildTTable();
+    if (simHasRun) drawSimChart();
+  }
+
+  var clearBtn = document.getElementById("clearDataBtn");
+  if (clearBtn){
+    clearBtn.addEventListener("click", function(){
+      dataCleared = true;
+      buildInputs(domInputsEl, state.n, null, "dom");
+      buildInputs(nondomInputsEl, state.n, null, "non");
+      drawChart();
+      runPart3();
+      buildConceptA();
+      buildConceptB();
+      if (simHasRun) drawSimChart();
+    });
+  }
+  var loadSampleBtn = document.getElementById("loadSampleBtn");
+  if (loadSampleBtn){
+    loadSampleBtn.addEventListener("click", function(){
+      dataCleared = false;
+      buildInputs(domInputsEl, state.n, DEMO_DOM, "dom");
+      buildInputs(nondomInputsEl, state.n, DEMO_NON, "non");
+      drawChart();
+      runPart3();
+      buildConceptA();
+      buildConceptB();
+      if (simHasRun) drawSimChart();
+    });
+  }
+
+  /* ---------- generic checked-answer helper ---------- */
+  function checkClose(userVal, correctVal, tol){
+    if (isNaN(userVal)) return null;
+    return Math.abs(userVal - correctVal) <= tol;
+  }
+  function wireCheck(inputEl, statusEl, getCorrect, tol, fmt){
+    function run(){
+      var v = parseFloat(inputEl.value);
+      var correct = getCorrect();
+      var ok = checkClose(v, correct, tol);
+      if (ok === null){ statusEl.textContent = ""; statusEl.className = "status"; return; }
+      if (ok){ statusEl.textContent = "correct"; statusEl.className = "status ok"; }
+      else { statusEl.textContent = "not quite"; statusEl.className = "status bad"; }
+    }
+    inputEl.addEventListener("blur", run);
+    inputEl.addEventListener("input", function(){ statusEl.textContent=""; statusEl.className="status"; });
+  }
+
+  /* ---------- Concept A: fill-in deviation practice, using real Part 1 data ---------- */
+  function buildConceptA(){
+    var host = document.getElementById("conceptA");
+    var values = readValues(state.n, "dom");
+    if (values.length < 2){
+      host.innerHTML = "<p style=\"color:var(--muted);font-size:13.5px;\">Enter your dominant-hand trial times in Part 1 below first \u2014 this section uses your own numbers.</p>";
+      return;
+    }
+    var mean = values.reduce(function(a,b){return a+b;},0) / values.length;
+    var df = values.length - 1;
+    var html = "<div class=\"computed-row\">"+
+      "<div class=\"computed-field\"><span class=\"k\">Mean (calculated)</span><span class=\"v\">"+mean.toFixed(3)+"</span></div>"+
+      "<div class=\"computed-field\"><span class=\"k\">Degrees of freedom</span><span class=\"v\">"+df+"</span></div>"+
+      "</div>";
+    html += "<p style=\"font-size:13px;color:var(--muted);margin:10px 0;\">These are your own dominant-hand trials from Part 1. Use the mean above to fill in how far each one is (xi \u2212 x\u0304).</p>";
+    html += "<table class=\"calc\"><thead><tr><th>Trial</th><th>Time</th><th>Deviation (xi \u2212 x\u0304)</th></tr></thead><tbody>";
+    values.forEach(function(v,i){
+      html += "<tr><td>"+(i+1)+"</td><td>"+v+"</td><td><input type=\"number\" step=\"any\" id=\"ca_"+i+"\" style=\"width:64px;\"></td></tr>";
+    });
+    html += "</tbody></table><div style=\"font-size:13px;color:var(--muted);margin-top:6px;\">Sum of your deviations: <span id=\"caSum\">\u2014</span> (it should equal 0)</div>";
+    host.innerHTML = html;
+    values.forEach(function(v,i){
+      var inp = document.getElementById("ca_"+i);
+      inp.addEventListener("input", function(){
+        var correct = v - mean;
+        var userV = parseFloat(inp.value);
+        var td = inp.parentElement;
+        if (!isNaN(userV)){
+          td.classList.remove("ok","bad");
+          td.classList.add(Math.abs(userV-correct)<0.05 ? "ok" : "bad");
+        } else {
+          td.classList.remove("ok","bad");
+        }
+        updateCaSum();
+      });
+    });
+  }
+  function updateCaSum(){
+    var inputs = document.querySelectorAll("#conceptA input[type=number]");
+    var sum = 0, any=false;
+    inputs.forEach(function(inp){
+      var val = parseFloat(inp.value);
+      if (!isNaN(val)){ sum += val; any=true; }
+    });
+    var caSumEl = document.getElementById("caSum");
+    if (caSumEl) caSumEl.textContent = any ? sum.toFixed(2) : "\u2014";
+  }
+
+  /* ---------- Concept B: missing value, using real Part 1 data ---------- */
+  function buildConceptB(){
+    var host = document.getElementById("conceptB");
+    var values = readValues(state.n, "non");
+    if (values.length < 2){
+      host.innerHTML = "<p style=\"color:var(--muted);font-size:13.5px;\">Enter your non-dominant-hand trial times in Part 1 below first \u2014 this section uses your own numbers.</p>";
+      return;
+    }
+    var mean = values.reduce(function(a,b){return a+b;},0) / values.length;
+    var hiddenIdx = values.length - 1;
+    var hiddenVal = values[hiddenIdx];
+    var known = values.slice(0, hiddenIdx);
+    var html = "<div class=\"computed-row\">"+
+      "<div class=\"computed-field\"><span class=\"k\">Mean (calculated)</span><span class=\"v\">"+mean.toFixed(3)+"</span></div>"+
+      "<div class=\"computed-field\"><span class=\"k\">n (trials)</span><span class=\"v\">"+values.length+"</span></div>"+
+      "</div>";
+    html += "<div style=\"font-size:14px;margin:10px 0;\">These are your own non-dominant-hand trials. We are hiding trial "+(hiddenIdx+1)+". The other "+known.length+" are: "+known.join(", ")+" \u2014 and the mean of all "+values.length+" is "+mean.toFixed(3)+".</div>";
+    html += "<div class=\"answer-row\"><label style=\"font-size:13px;\">Missing (trial "+(hiddenIdx+1)+") value =</label><input type=\"number\" step=\"any\" id=\"cbInput\"><span class=\"status\" id=\"cbStatus\"></span></div>";
+    host.innerHTML = html;
+    var inp = document.getElementById("cbInput");
+    var status = document.getElementById("cbStatus");
+    wireCheck(inp, status, function(){ return hiddenVal; }, 0.05);
+  }
+
+  /* ---------- Part 3: real-data fill-in calculation ---------- */
+  function computeStats(arr){
+    var n = arr.length;
+    var mean = arr.reduce(function(a,b){return a+b;},0)/n;
+    var devs = arr.map(function(x){ return x-mean; });
+    var sq = devs.map(function(d){ return d*d; });
+    var ss = sq.reduce(function(a,b){return a+b;},0);
+    var variance = n>1 ? ss/(n-1) : 0;
+    var sd = Math.sqrt(variance);
+    var sem = sd/Math.sqrt(n);
+    return {n:n, mean:mean, devs:devs, sq:sq, ss:ss, variance:variance, sd:sd, sem:sem, df:n-1};
+  }
+
+  function renderHandCalc(container, arr, prefix){
+    if (arr.length < 2){
+      container.innerHTML = "<p style=\"color:var(--muted);font-size:13.5px;\">Enter at least 2 trial times above.</p>";
+      return null;
+    }
+    var s = computeStats(arr);
+    var tS = tStar(s.df, state.level);
+    var ciLo = s.mean - tS*s.sem, ciHi = s.mean + tS*s.sem;
+
+    var html = "<div class=\"answer-row\"><span class=\"formula-line\" style=\"margin:0;\">Mean x\u0304 = \u03a3xi / "+s.n+" =</span><input type=\"number\" step=\"any\" id=\""+prefix+"_mean\"><span class=\"status\" id=\""+prefix+"_mean_s\"></span></div>";
+    html += "<p style=\"font-size:12.5px;color:var(--muted);margin:2px 0 12px;\">Use your own calculated mean below \u2014 the table is graded against the true mean either way.</p>";
+
+    html += "<table class=\"calc\"><thead><tr><th>#</th><th>xi</th><th>xi \u2212 x\u0304</th><th>(xi \u2212 x\u0304)\u00b2</th></tr></thead><tbody>";
+    arr.forEach(function(v,i){
+      html += "<tr><td>"+(i+1)+"</td><td>"+v+"</td>"+
+        "<td><input type=\"number\" step=\"any\" id=\""+prefix+"_dev_"+i+"\"></td>"+
+        "<td><input type=\"number\" step=\"any\" id=\""+prefix+"_sq_"+i+"\"></td></tr>";
+    });
+    html += "</tbody></table>";
+
+    html += "<div class=\"answer-row\"><span class=\"formula-line\" style=\"margin:0;\">Variance s\u00b2 = \u03a3(xi\u2212x\u0304)\u00b2 / (n\u22121) =</span><input type=\"number\" step=\"any\" id=\""+prefix+"_var\"><span class=\"status\" id=\""+prefix+"_var_s\"></span></div>";
+    html += "<div class=\"answer-row\"><span class=\"formula-line\" style=\"margin:0;\">SD = \u221as\u00b2 =</span><input type=\"number\" step=\"any\" id=\""+prefix+"_sd\"><span class=\"status\" id=\""+prefix+"_sd_s\"></span></div>";
+    html += "<div class=\"answer-row\"><span class=\"formula-line\" style=\"margin:0;\">SEM = SD / \u221a"+s.n+" =</span><input type=\"number\" step=\"any\" id=\""+prefix+"_sem\"><span class=\"status\" id=\""+prefix+"_sem_s\"></span></div>";
+    html += "<div class=\"answer-row\"><span class=\"formula-line\" style=\"margin:0;\">Degrees of freedom df = n \u2212 1 =</span><input type=\"number\" step=\"any\" id=\""+prefix+"_df\"><span class=\"status\" id=\""+prefix+"_df_s\"></span></div>";
+    html += "<div class=\"formula-line\">Look up t* for your df at "+state.level+"% in the table below, then use it here:</div>";
+    html += "<div class=\"answer-row\"><span class=\"formula-line\" style=\"margin:0;\">"+state.level+"% CI lower bound =</span><input type=\"number\" step=\"any\" id=\""+prefix+"_cilo\"><span class=\"status\" id=\""+prefix+"_cilo_s\"></span></div>";
+    html += "<div class=\"answer-row\"><span class=\"formula-line\" style=\"margin:0;\">"+state.level+"% CI upper bound =</span><input type=\"number\" step=\"any\" id=\""+prefix+"_cihi\"><span class=\"status\" id=\""+prefix+"_cihi_s\"></span></div>";
+    html += "<button class=\"reveal-btn\" type=\"button\" id=\""+prefix+"_reveal\">Show worked answer</button>";
+    html += "<div class=\"ci-result\" id=\""+prefix+"_answer\" style=\"display:none;\"></div>";
+
+    container.innerHTML = html;
+
+    wireCheck(document.getElementById(prefix+"_mean"), document.getElementById(prefix+"_mean_s"), function(){return s.mean;}, 0.05);
+    wireCheck(document.getElementById(prefix+"_df"), document.getElementById(prefix+"_df_s"), function(){return s.df;}, 0.001);
+
+    arr.forEach(function(v,i){
+      var devInp = document.getElementById(prefix+"_dev_"+i);
+      var sqInp = document.getElementById(prefix+"_sq_"+i);
+      devInp.addEventListener("blur", function(){
+        var uv = parseFloat(devInp.value);
+        var td = devInp.parentElement;
+        td.classList.remove("ok","bad");
+        if (!isNaN(uv)) td.classList.add(Math.abs(uv-s.devs[i])<0.05 ? "ok":"bad");
+      });
+      sqInp.addEventListener("blur", function(){
+        var uv = parseFloat(sqInp.value);
+        var td = sqInp.parentElement;
+        td.classList.remove("ok","bad");
+        if (!isNaN(uv)) td.classList.add(Math.abs(uv-s.sq[i])<0.1 ? "ok":"bad");
+      });
+    });
+
+    wireCheck(document.getElementById(prefix+"_var"), document.getElementById(prefix+"_var_s"), function(){return s.variance;}, 0.05);
+    wireCheck(document.getElementById(prefix+"_sd"), document.getElementById(prefix+"_sd_s"), function(){return s.sd;}, 0.05);
+    wireCheck(document.getElementById(prefix+"_sem"), document.getElementById(prefix+"_sem_s"), function(){return s.sem;}, 0.05);
+    wireCheck(document.getElementById(prefix+"_cilo"), document.getElementById(prefix+"_cilo_s"), function(){return ciLo;}, 0.1);
+    wireCheck(document.getElementById(prefix+"_cihi"), document.getElementById(prefix+"_cihi_s"), function(){return ciHi;}, 0.1);
+
+    document.getElementById(prefix+"_reveal").addEventListener("click", function(){
+      var box = document.getElementById(prefix+"_answer");
+      var btn = document.getElementById(prefix+"_reveal");
+      var showing = box.style.display === "block";
+      if (showing){
+        box.style.display = "none";
+        btn.textContent = "Show worked answer";
+      } else {
+        box.style.display = "block";
+        box.innerHTML = "Mean x\u0304 = "+s.mean.toFixed(3)+"<br>Variance = "+s.variance.toFixed(3)+" &nbsp; SD = "+s.sd.toFixed(3)+" &nbsp; SEM = "+s.sem.toFixed(3)+" &nbsp; df = "+s.df+"<br>"+state.level+"% CI = "+s.mean.toFixed(2)+" \u00b1 ("+tS.toFixed(3)+" \u00d7 "+s.sem.toFixed(3)+") = ["+ciLo.toFixed(2)+", "+ciHi.toFixed(2)+"]";
+        btn.textContent = "Hide worked answer";
+      }
+    });
+
+    return {s:s, ci:[ciLo,ciHi], tStar:tS, values:arr};
+  }
+
+  var lastResult = {dom:null, non:null};
+  var domCalcEl = document.getElementById("domCalc");
+  var nondomCalcEl = document.getElementById("nondomCalc");
+
+  function runPart3(){
+    var domVals = readValues(state.n, "dom");
+    var nonVals = readValues(state.n, "non");
+    lastResult.dom = renderHandCalc(domCalcEl, domVals, "dom");
+    lastResult.non = renderHandCalc(nondomCalcEl, nonVals, "non");
+    drawNumberline();
+    highlightTable();
+  }
+
+  /* ---------- number line ---------- */
+  var nl = document.getElementById("numberline");
+  var overlapNote = document.getElementById("overlapNote");
+  var NLW=680;
+  function drawNumberline(){
+    while (nl.firstChild) nl.removeChild(nl.firstChild);
+    var d = lastResult.dom, nn = lastResult.non;
+    if (!d || !nn){ overlapNote.innerHTML=""; return; }
+    var allVals = [].concat(
+      d.s.mean-d.tStar*d.s.sem-d.s.sd, d.s.mean+d.tStar*d.s.sem+d.s.sd,
+      nn.s.mean-nn.tStar*nn.s.sem-nn.s.sd, nn.s.mean+nn.tStar*nn.s.sem+nn.s.sd
+    );
+    var lo = Math.min.apply(null, allVals), hi = Math.max.apply(null, allVals);
+    var pad = (hi-lo)*0.12 || 1; lo -= pad; hi += pad;
+    var ML=40, MR=40;
+    function xp(v){ return ML + (v-lo)/(hi-lo)*(NLW-ML-MR); }
+    var axisY = 130;
+    nl.appendChild(el("line",{x1:ML,x2:NLW-MR,y1:axisY,y2:axisY,stroke:"var(--line)","stroke-width":1}));
+    for (var i=0;i<=5;i++){
+      var v = lo+(hi-lo)*i/5, xx = xp(v);
+      nl.appendChild(el("line",{x1:xx,x2:xx,y1:axisY,y2:axisY+5,stroke:"var(--muted)","stroke-width":1}));
+      var t = el("text",{x:xx,y:axisY+18,"text-anchor":"middle","font-size":"10.5",fill:"var(--muted)","font-family":"IBM Plex Mono, monospace"});
+      t.textContent = v.toFixed(1);
+      nl.appendChild(t);
+    }
+    function row(res, y, color, label, prefix){
+      var ciLo=res.s.mean-res.tStar*res.s.sem, ciHi=res.s.mean+res.tStar*res.s.sem;
+      nl.appendChild(el("line",{x1:xp(ciLo),x2:xp(ciHi),y1:y,y2:y,stroke:color,"stroke-width":5,"stroke-linecap":"round",opacity:0.85}));
+      [ciLo,ciHi].forEach(function(v){ nl.appendChild(el("line",{x1:xp(v),x2:xp(v),y1:y-7,y2:y+7,stroke:color,"stroke-width":2})); });
+      res.values.forEach(function(v){ nl.appendChild(el("circle",{cx:xp(v),cy:y,r:3,fill:color,opacity:0.35})); });
+      nl.appendChild(el("circle",{cx:xp(res.s.mean),cy:y,r:5.5,fill:color,stroke:"var(--panel)","stroke-width":1.5}));
+      var t = el("text",{x:ML,y:y-12,"font-size":"12",fill:color,"font-family":"Inter","font-weight":"700"});
+      t.textContent = label;
+      nl.appendChild(t);
+    }
+    row(d, 55, "var(--dominant)", "Dominant", "dom");
+    row(nn, 95, "var(--nondom)", "Non-dominant", "non");
+    var dLo=d.s.mean-d.tStar*d.s.sem, dHi=d.s.mean+d.tStar*d.s.sem;
+    var nLo=nn.s.mean-nn.tStar*nn.s.sem, nHi=nn.s.mean+nn.tStar*nn.s.sem;
+    var overlap = Math.max(dLo,nLo) <= Math.min(dHi,nHi);
+    overlapNote.className = "overlap-note " + (overlap?"yes":"no");
+    overlapNote.textContent = overlap
+      ? "The confidence intervals overlap: you do not have strong evidence the two hands are really different."
+      : "The confidence intervals do not overlap: that is evidence the two hands really do differ.";
+  }
+
+  /* ---------- Part 4: word-bank sentences ---------- */
+  var WORD_BANK = ["mean","precise","range","shrinks","spread"];
+  var SENTENCES = [
+    {tag:"SD", before:"Standard deviation tells us the ", answer:"spread", after:" of individual trials around the mean. It does NOT shrink with more trials."},
+    {tag:"SEM", before:"The standard error of the mean tells us how ", answer:"precise", after:" our sample mean is, and it ", answer2:"shrinks", after2:" as n grows."},
+    {tag:"95% CI", before:"The confidence interval gives a ", answer:"range", after:" of values where the true mean likely falls \u2014 not where 95% of individual trials fall."}
+  ];
+  function shuffled(arr){
+    var a = arr.slice();
+    for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var tmp=a[i]; a[i]=a[j]; a[j]=tmp; }
+    return a;
+  }
+  function makeSelect(id, correct){
+    var opts = shuffled(WORD_BANK);
+    var html = "<select class=\"word-select\" id=\""+id+"\" data-correct=\""+correct+"\"><option value=\"\">choose\u2026</option>";
+    opts.forEach(function(w){ html += "<option value=\""+w+"\">"+w+"</option>"; });
+    html += "</select>";
+    return html;
+  }
+  function buildPart4(){
+    var host = document.getElementById("part4panel");
+    var html = "";
+    SENTENCES.forEach(function(s, idx){
+      html += "<div class=\"sentence-block\"><div class=\"tag\">"+s.tag+"</div><div class=\"sentence\">";
+      html += s.before + makeSelect("p4_"+idx+"_a", s.answer);
+      if (s.answer2){ html += s.after + makeSelect("p4_"+idx+"_b", s.answer2) + (s.after2||""); }
+      else { html += s.after; }
+      html += "</div></div>";
+    });
+    host.innerHTML = html;
+    host.querySelectorAll("select").forEach(function(sel){
+      sel.addEventListener("change", function(){
+        if (!sel.value) { sel.style.background = ""; return; }
+        sel.style.background = (sel.value === sel.getAttribute("data-correct")) ? "var(--good-fill)" : "var(--bad-fill)";
+      });
+    });
+  }
+
+  /* ---------- t-table ---------- */
+  var ttableEl = document.getElementById("ttableEl");
+  var showAllBtn = document.getElementById("showAllBtn");
+  var showAll = false;
+  function buildTTable(){
+    var head = "<thead><tr><th>df (n\u22121)</th><th>90%</th><th>95%</th><th>99%</th></tr></thead>";
+    var df = state.n - 1;
+    var rowsToShow = T_ROWS;
+    if (!showAll){
+      var idx = 0, bestDist = Infinity;
+      T_ROWS.forEach(function(r,i){ var d=Math.abs(r[0]-df); if (d<bestDist){bestDist=d; idx=i;} });
+      var lo = Math.max(0, idx-2), hi = Math.min(T_ROWS.length-1, idx+2);
+      rowsToShow = T_ROWS.slice(lo, hi+1);
+    }
+    var body = "<tbody>";
+    rowsToShow.forEach(function(r){
+      var dfLabel = r[0] >= 100000 ? "\u221e" : r[0];
+      body += "<tr data-df=\""+r[0]+"\"><td class=\"dfcell\">"+dfLabel+"</td><td data-c=\"90\">"+r[1].toFixed(3)+"</td><td data-c=\"95\">"+r[2].toFixed(3)+"</td><td data-c=\"99\">"+r[3].toFixed(3)+"</td></tr>";
+    });
+    body += "</tbody>";
+    ttableEl.innerHTML = head + body;
+    highlightTable();
+  }
+  function highlightTable(){
+    var rows = ttableEl.querySelectorAll("tbody tr");
+    var targetDf = state.n - 1;
+    var level = state.level;
+    var best=null, bestDist=Infinity;
+    for (var i=0;i<rows.length;i++){
+      var row = rows[i];
+      row.classList.remove("match");
+      var rd = parseFloat(row.getAttribute("data-df"));
+      var dist = Math.abs(rd-targetDf);
+      if (dist<bestDist){ bestDist=dist; best=row; }
+    }
+    for (var j=0;j<rows.length;j++){
+      var tds = rows[j].querySelectorAll("td");
+      for (var k=0;k<tds.length;k++) tds[k].classList.remove("match-col");
+    }
+    if (best){
+      best.classList.add("match");
+      var cell = best.querySelector("td[data-c=\""+level+"\"]");
+      if (cell) cell.classList.add("match-col");
+    }
+  }
+  showAllBtn.addEventListener("click", function(){
+    showAll = !showAll;
+    showAllBtn.textContent = showAll ? "Show fewer rows" : "Show all rows";
+    buildTTable();
+  });
+
+  /* ---------- init ---------- */
+  buildConceptA();
+  buildConceptB();
+  buildPart4();
+  buildTTable();
+  onNChange();
+})();
+</script>
+</body>
+</html>

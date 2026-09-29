@@ -156,6 +156,24 @@
   .reveal-btn:hover{background:var(--navy-dim);color:var(--panel);}
   .ci-result{margin-top:10px;padding:10px 12px;border-radius:9px;background:var(--panel);border:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;}
 
+  .cta-btn{
+    background:var(--navy);color:#fff;border:none;border-radius:26px;
+    padding:13px 24px;font-size:15.5px;font-weight:700;font-family:'Inter';
+    cursor:pointer;box-shadow:0 4px 14px color-mix(in srgb, var(--navy) 45%, transparent);
+  }
+  .cta-btn:hover{background:var(--navy-dim);}
+  .cta-btn.pulse{animation:ctaPulse 1.7s ease-in-out infinite;}
+  @keyframes ctaPulse{
+    0%,100%{transform:scale(1);box-shadow:0 4px 14px color-mix(in srgb, var(--navy) 45%, transparent);}
+    50%{transform:scale(1.035);box-shadow:0 6px 22px color-mix(in srgb, var(--navy) 70%, transparent);}
+  }
+  .mode-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;}
+  .mode-note{font-size:13px;color:var(--muted);}
+  .example-banner{
+    margin-bottom:14px;padding:10px 14px;border-radius:9px;font-size:13.5px;
+    background:var(--amber-fill);border:1px solid color-mix(in srgb, var(--amber) 40%, var(--line));
+  }
+
   .concept-box{background:#FBF7EE;border:1px solid var(--line);border-radius:12px;padding:18px;}
   :root[data-theme="dark"] .concept-box{background:#26211a;}
   @media (prefers-color-scheme: dark){
@@ -274,7 +292,7 @@
     <h2><span class="secnum">2</span>Where does this curve actually come from?</h2>
     <p class="lede">It is not just a formula. Imagine a world where the two hands are exactly identical, and you ran the toothpick trial thousands of separate times with n trials each. Every time, chance alone gives you a slightly different average. Simulate that below and watch the bars trace out the same curve as above.</p>
     <div class="panel">
-      <button class="reveal-btn" id="simBtn" type="button">Simulate 4,000 virtual groups</button>
+      <button class="cta-btn pulse" id="simBtn" type="button">&#9654; Simulate 4,000 virtual groups</button>
       <svg id="simChart" viewBox="0 0 680 220" role="img" aria-label="Histogram of simulated sample averages" style="margin-top:14px;display:none;"></svg>
       <p class="tech-note" id="simNote" style="display:none;"></p>
     </div>
@@ -302,6 +320,16 @@
   <section class="section" id="part2">
     <h2><span class="secnum">4</span>Part 2 — Two Key Concepts</h2>
     <p class="lede">Two quick checks before you calculate anything — using your own trial times from Part 1, above.</p>
+
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="mode-bar">
+        <button class="reveal-btn" id="autofillBtn2" type="button">Show a completed example instead</button>
+        <button class="reveal-btn" id="backToOwnBtn2" type="button" style="display:none;">Back to my own data</button>
+        <span class="mode-note" id="part2ModeNote">Not able to finish, or short on time? See a fully worked example using sample data instead of your own.</span>
+      </div>
+      <div class="example-banner" id="exampleBanner2" style="display:none;">Showing a fully worked example using sample data below — not your own numbers from Part 1. Click "Back to my own data" above to keep working on your own.</div>
+    </div>
+
     <div class="concept-box">
       <div class="concept-grid">
         <div>
@@ -321,6 +349,34 @@
   <section class="section" id="part3">
     <h2><span class="secnum">5</span>Part 3 — Calculate Your Statistics</h2>
     <p class="lede">Now use your own data from Part 1. Fill in each blank yourself — the page will tell you if you are right.</p>
+
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="global-controls" style="margin-bottom:0;">
+        <div class="field">
+          <label for="nInputPart3">Number of trials per hand (n)</label>
+          <input type="number" id="nInputPart3" min="2" max="15" value="5" style="width:80px;">
+        </div>
+        <div class="field">
+          <label for="confSelectPart3">Confidence level</label>
+          <select id="confSelectPart3">
+            <option value="90">90%</option>
+            <option value="95" selected>95%</option>
+            <option value="99">99%</option>
+          </select>
+        </div>
+        <div class="mode-note">Same as the controls at the top of the page — changing either one updates both.</div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="mode-bar">
+        <button class="reveal-btn" id="autofillBtn" type="button">Show a completed example instead</button>
+        <button class="reveal-btn" id="backToOwnBtn" type="button" style="display:none;">Back to my own data</button>
+        <span class="mode-note" id="part3ModeNote">Not able to finish, or short on time? See a fully worked example using sample data instead of your own.</span>
+      </div>
+      <div class="example-banner" id="exampleBanner" style="display:none;">Showing a fully worked example using sample data below — not your own numbers from Part 1. Click "Back to my own data" above to keep working on your own.</div>
+    </div>
+
     <div class="panel">
       <div class="handgrid">
         <div class="hand-card dominant">
@@ -439,19 +495,41 @@
   var nInput = document.getElementById("nInput");
   var confSelect = document.getElementById("confSelect");
   var techToggle = document.getElementById("techToggle");
+  var nInputPart3 = document.getElementById("nInputPart3");
+  var confSelectPart3 = document.getElementById("confSelectPart3");
 
-  nInput.addEventListener("input", function(){
-    var v = parseInt(nInput.value,10);
+  function syncNControls(){
+    nInput.value = state.n;
+    if (nInputPart3) nInputPart3.value = state.n;
+  }
+  function syncLevelControls(){
+    confSelect.value = state.level;
+    if (confSelectPart3) confSelectPart3.value = state.level;
+    var legEl = document.getElementById("legLevel");
+    if (legEl) legEl.textContent = state.level;
+  }
+  function setN(v){
     if (isNaN(v)) return;
     if (v<2) v=2; if (v>15) v=15;
     state.n = v;
+    syncNControls();
     onNChange();
-  });
-  confSelect.addEventListener("change", function(){
-    state.level = parseInt(confSelect.value,10);
-    document.getElementById("legLevel").textContent = state.level;
+  }
+  function setLevel(v){
+    if (isNaN(v)) return;
+    state.level = v;
+    syncLevelControls();
     drawChart(); runPart3(); highlightTable();
-  });
+  }
+
+  nInput.addEventListener("input", function(){ setN(parseInt(nInput.value,10)); });
+  confSelect.addEventListener("change", function(){ setLevel(parseInt(confSelect.value,10)); });
+  if (nInputPart3){
+    nInputPart3.addEventListener("input", function(){ setN(parseInt(nInputPart3.value,10)); });
+  }
+  if (confSelectPart3){
+    confSelectPart3.addEventListener("change", function(){ setLevel(parseInt(confSelectPart3.value,10)); });
+  }
   techToggle.addEventListener("change", function(){
     state.tech = techToggle.checked;
     drawChart();
@@ -650,7 +728,7 @@
     simNote.innerHTML = "Green bars: the t-value from "+trials.toLocaleString()+" randomly simulated groups of n = "+n+" (with no real difference built in). Navy line: the theoretical curve from above. They land on top of each other \u2014 that curve is not arbitrary, it is what pure chance actually produces.";
   }
 
-  simBtn.addEventListener("click", function(){ simHasRun = true; drawSimChart(); });
+  simBtn.addEventListener("click", function(){ simHasRun = true; simBtn.classList.remove("pulse"); drawSimChart(); });
 
 
   var domInputsEl = document.getElementById("domInputs");
@@ -659,7 +737,31 @@
   var DEMO_NON = [38,34,41,36,40,37,39,35,38,36,39,37,35,40,36];
   var dataCleared = false;
 
-  function buildInputs(container, n, defaults, prefix){
+  /* generic snapshot/restore so rebuilding a container's innerHTML
+     (which the app does a lot, to stay in sync with state) doesn't
+     wipe out whatever the student already typed there */
+  function snapshotFormValues(container){
+    var map = {};
+    if (!container) return map;
+    container.querySelectorAll("input").forEach(function(inp){ map[inp.id] = inp.value; });
+    return map;
+  }
+  function restoreFormValues(container, map){
+    if (!container || !map) return;
+    container.querySelectorAll("input").forEach(function(inp){
+      if (map[inp.id] !== undefined && map[inp.id] !== "") inp.value = map[inp.id];
+    });
+  }
+
+  function buildInputs(container, n, defaults, prefix, forceDefaults){
+    var existing = null;
+    if (!forceDefaults){
+      existing = [];
+      for (var i=0;i<n;i++){
+        var e = document.getElementById(prefix+i);
+        existing[i] = e ? e.value : undefined;
+      }
+    }
     container.innerHTML = "";
     for (var i=0;i<n;i++){
       var wrap = document.createElement("div");
@@ -669,11 +771,16 @@
       lab.setAttribute("for", prefix+i);
       var inp = document.createElement("input");
       inp.type = "number"; inp.step = "any"; inp.id = prefix+i;
-      if (defaults && defaults[i] !== undefined) inp.value = defaults[i];
+      var val;
+      if (existing && existing[i] !== undefined){
+        val = existing[i];
+      } else if (defaults && defaults[i] !== undefined){
+        val = defaults[i];
+      }
+      if (val !== undefined && val !== "") inp.value = val;
       inp.addEventListener("input", function(){
         runPart3();
-        buildConceptA();
-        buildConceptB();
+        runPart2();
       });
       wrap.appendChild(lab); wrap.appendChild(inp);
       container.appendChild(wrap);
@@ -690,12 +797,11 @@
   }
 
   function onNChange(){
-    buildInputs(domInputsEl, state.n, dataCleared ? null : DEMO_DOM, "dom");
-    buildInputs(nondomInputsEl, state.n, dataCleared ? null : DEMO_NON, "non");
+    buildInputs(domInputsEl, state.n, dataCleared ? null : DEMO_DOM, "dom", false);
+    buildInputs(nondomInputsEl, state.n, dataCleared ? null : DEMO_NON, "non", false);
     drawChart();
     runPart3();
-    buildConceptA();
-    buildConceptB();
+    runPart2();
     buildTTable();
     if (simHasRun) drawSimChart();
   }
@@ -704,12 +810,11 @@
   if (clearBtn){
     clearBtn.addEventListener("click", function(){
       dataCleared = true;
-      buildInputs(domInputsEl, state.n, null, "dom");
-      buildInputs(nondomInputsEl, state.n, null, "non");
+      buildInputs(domInputsEl, state.n, null, "dom", true);
+      buildInputs(nondomInputsEl, state.n, null, "non", true);
       drawChart();
       runPart3();
-      buildConceptA();
-      buildConceptB();
+      runPart2();
       if (simHasRun) drawSimChart();
     });
   }
@@ -717,12 +822,11 @@
   if (loadSampleBtn){
     loadSampleBtn.addEventListener("click", function(){
       dataCleared = false;
-      buildInputs(domInputsEl, state.n, DEMO_DOM, "dom");
-      buildInputs(nondomInputsEl, state.n, DEMO_NON, "non");
+      buildInputs(domInputsEl, state.n, DEMO_DOM, "dom", true);
+      buildInputs(nondomInputsEl, state.n, DEMO_NON, "non", true);
       drawChart();
       runPart3();
-      buildConceptA();
-      buildConceptB();
+      runPart2();
       if (simHasRun) drawSimChart();
     });
   }
@@ -745,21 +849,31 @@
     inputEl.addEventListener("input", function(){ statusEl.textContent=""; statusEl.className="status"; });
   }
 
-  /* ---------- Concept A: fill-in deviation practice, using real Part 1 data ---------- */
+  /* ---------- Concept A: fill-in deviation practice ---------- */
+  var ownConceptSnapshot = {};
   function buildConceptA(){
     var host = document.getElementById("conceptA");
-    var values = readValues(state.n, "dom");
+    var isExample = (part2Mode === "example");
+    var capture = (!isExample && previousPart2Mode === "own");
+    if (capture){
+      var pre = snapshotFormValues(host);
+      Object.keys(pre).forEach(function(id){ if (pre[id] !== "") ownConceptSnapshot[id] = pre[id]; });
+    }
+    var values = isExample ? NOVEL_DOM.slice(0, state.n) : readValues(state.n, "dom");
     if (values.length < 2){
       host.innerHTML = "<p style=\"color:var(--muted);font-size:13.5px;\">Enter your dominant-hand trial times in Part 1 below first \u2014 this section uses your own numbers.</p>";
       return;
     }
     var mean = values.reduce(function(a,b){return a+b;},0) / values.length;
     var df = values.length - 1;
+    var introLine = isExample
+      ? "These are example dominant-hand trial times (not your own). Use the mean above to fill in how far each one is (xi \u2212 x\u0304)."
+      : "These are your own dominant-hand trials from Part 1. Use the mean above to fill in how far each one is (xi \u2212 x\u0304).";
     var html = "<div class=\"computed-row\">"+
       "<div class=\"computed-field\"><span class=\"k\">Mean (calculated)</span><span class=\"v\">"+mean.toFixed(3)+"</span></div>"+
       "<div class=\"computed-field\"><span class=\"k\">Degrees of freedom</span><span class=\"v\">"+df+"</span></div>"+
       "</div>";
-    html += "<p style=\"font-size:13px;color:var(--muted);margin:10px 0;\">These are your own dominant-hand trials from Part 1. Use the mean above to fill in how far each one is (xi \u2212 x\u0304).</p>";
+    html += "<p style=\"font-size:13px;color:var(--muted);margin:10px 0;\">"+introLine+"</p>";
     html += "<table class=\"calc\"><thead><tr><th>Trial</th><th>Time</th><th>Deviation (xi \u2212 x\u0304)</th></tr></thead><tbody>";
     values.forEach(function(v,i){
       html += "<tr><td>"+(i+1)+"</td><td>"+v+"</td><td><input type=\"number\" step=\"any\" id=\"ca_"+i+"\" style=\"width:64px;\"></td></tr>";
@@ -781,6 +895,16 @@
         updateCaSum();
       });
     });
+    if (isExample){
+      values.forEach(function(v,i){
+        var inp = document.getElementById("ca_"+i);
+        inp.value = (v-mean).toFixed(3);
+        inp.dispatchEvent(new Event("input"));
+      });
+    } else {
+      restoreFormValues(host, ownConceptSnapshot);
+      host.querySelectorAll("input").forEach(function(inp){ if (inp.value !== "") inp.dispatchEvent(new Event("input")); });
+    }
   }
   function updateCaSum(){
     var inputs = document.querySelectorAll("#conceptA input[type=number]");
@@ -793,10 +917,16 @@
     if (caSumEl) caSumEl.textContent = any ? sum.toFixed(2) : "\u2014";
   }
 
-  /* ---------- Concept B: missing value, using real Part 1 data ---------- */
+  /* ---------- Concept B: missing value ---------- */
   function buildConceptB(){
     var host = document.getElementById("conceptB");
-    var values = readValues(state.n, "non");
+    var isExample = (part2Mode === "example");
+    var capture = (!isExample && previousPart2Mode === "own");
+    if (capture){
+      var pre = snapshotFormValues(host);
+      Object.keys(pre).forEach(function(id){ if (pre[id] !== "") ownConceptSnapshot[id] = pre[id]; });
+    }
+    var values = isExample ? NOVEL_NON.slice(0, state.n) : readValues(state.n, "non");
     if (values.length < 2){
       host.innerHTML = "<p style=\"color:var(--muted);font-size:13.5px;\">Enter your non-dominant-hand trial times in Part 1 below first \u2014 this section uses your own numbers.</p>";
       return;
@@ -805,16 +935,26 @@
     var hiddenIdx = values.length - 1;
     var hiddenVal = values[hiddenIdx];
     var known = values.slice(0, hiddenIdx);
+    var introLine = isExample
+      ? "These are example non-dominant-hand trial times (not your own). We are hiding trial "+(hiddenIdx+1)+"."
+      : "These are your own non-dominant-hand trials. We are hiding trial "+(hiddenIdx+1)+".";
     var html = "<div class=\"computed-row\">"+
       "<div class=\"computed-field\"><span class=\"k\">Mean (calculated)</span><span class=\"v\">"+mean.toFixed(3)+"</span></div>"+
       "<div class=\"computed-field\"><span class=\"k\">n (trials)</span><span class=\"v\">"+values.length+"</span></div>"+
       "</div>";
-    html += "<div style=\"font-size:14px;margin:10px 0;\">These are your own non-dominant-hand trials. We are hiding trial "+(hiddenIdx+1)+". The other "+known.length+" are: "+known.join(", ")+" \u2014 and the mean of all "+values.length+" is "+mean.toFixed(3)+".</div>";
+    html += "<div style=\"font-size:14px;margin:10px 0;\">"+introLine+" The other "+known.length+" are: "+known.join(", ")+" \u2014 and the mean of all "+values.length+" is "+mean.toFixed(3)+".</div>";
     html += "<div class=\"answer-row\"><label style=\"font-size:13px;\">Missing (trial "+(hiddenIdx+1)+") value =</label><input type=\"number\" step=\"any\" id=\"cbInput\"><span class=\"status\" id=\"cbStatus\"></span></div>";
     host.innerHTML = html;
     var inp = document.getElementById("cbInput");
     var status = document.getElementById("cbStatus");
     wireCheck(inp, status, function(){ return hiddenVal; }, 0.05);
+    if (isExample){
+      inp.value = hiddenVal.toFixed(3);
+      inp.dispatchEvent(new Event("blur"));
+    } else {
+      restoreFormValues(host, ownConceptSnapshot);
+      if (inp.value !== "") inp.dispatchEvent(new Event("blur"));
+    }
   }
 
   /* ---------- Part 3: real-data fill-in calculation ---------- */
@@ -830,10 +970,18 @@
     return {n:n, mean:mean, devs:devs, sq:sq, ss:ss, variance:variance, sd:sd, sem:sem, df:n-1};
   }
 
-  function renderHandCalc(container, arr, prefix){
+  var ownAnswerSnapshot = {};
+
+  function renderHandCalc(container, arr, prefix, autofill, capture, restore){
     if (arr.length < 2){
       container.innerHTML = "<p style=\"color:var(--muted);font-size:13.5px;\">Enter at least 2 trial times above.</p>";
       return null;
+    }
+    if (capture){
+      var pre = snapshotFormValues(container);
+      Object.keys(pre).forEach(function(id){
+        if (pre[id] !== "") ownAnswerSnapshot[id] = pre[id];
+      });
     }
     var s = computeStats(arr);
     var tS = tStar(s.df, state.level);
@@ -902,20 +1050,122 @@
       }
     });
 
+    if (autofill){
+      /* fill every blank with the correct value for this (novel, example) dataset */
+      document.getElementById(prefix+"_mean").value = s.mean.toFixed(3);
+      arr.forEach(function(v,i){
+        document.getElementById(prefix+"_dev_"+i).value = s.devs[i].toFixed(3);
+        document.getElementById(prefix+"_sq_"+i).value = s.sq[i].toFixed(3);
+      });
+      document.getElementById(prefix+"_var").value = s.variance.toFixed(3);
+      document.getElementById(prefix+"_sd").value = s.sd.toFixed(3);
+      document.getElementById(prefix+"_sem").value = s.sem.toFixed(3);
+      document.getElementById(prefix+"_df").value = s.df;
+      document.getElementById(prefix+"_cilo").value = ciLo.toFixed(3);
+      document.getElementById(prefix+"_cihi").value = ciHi.toFixed(3);
+      container.querySelectorAll("input").forEach(function(inp){ inp.dispatchEvent(new Event("blur")); });
+    } else if (restore){
+      restoreFormValues(container, ownAnswerSnapshot);
+      container.querySelectorAll("input").forEach(function(inp){ if (inp.value !== "") inp.dispatchEvent(new Event("blur")); });
+    }
+
     return {s:s, ci:[ciLo,ciHi], tStar:tS, values:arr};
   }
 
   var lastResult = {dom:null, non:null};
   var domCalcEl = document.getElementById("domCalc");
   var nondomCalcEl = document.getElementById("nondomCalc");
+  var part3Mode = "own"; // "own" | "example"
+  var previousPart3Mode = "own";
+  var NOVEL_DOM = [24,19,26,21,23,20,27,22,25,18,24,21,26,23,20];
+  var NOVEL_NON = [33,29,36,31,34,28,37,32,35,27,33,30,36,32,29];
 
   function runPart3(){
-    var domVals = readValues(state.n, "dom");
-    var nonVals = readValues(state.n, "non");
-    lastResult.dom = renderHandCalc(domCalcEl, domVals, "dom");
-    lastResult.non = renderHandCalc(nondomCalcEl, nonVals, "non");
+    var domVals, nonVals, autofill;
+    if (part3Mode === "example"){
+      domVals = NOVEL_DOM.slice(0, state.n);
+      nonVals = NOVEL_NON.slice(0, state.n);
+      autofill = true;
+    } else {
+      domVals = readValues(state.n, "dom");
+      nonVals = readValues(state.n, "non");
+      autofill = false;
+    }
+    var capture = (part3Mode === "own" && previousPart3Mode === "own");
+    var restore = (part3Mode === "own");
+    lastResult.dom = renderHandCalc(domCalcEl, domVals, "dom", autofill, capture, restore);
+    lastResult.non = renderHandCalc(nondomCalcEl, nonVals, "non", autofill, capture, restore);
+    previousPart3Mode = part3Mode;
     drawNumberline();
     highlightTable();
+  }
+
+  var autofillBtn = document.getElementById("autofillBtn");
+  var backToOwnBtn = document.getElementById("backToOwnBtn");
+  var part3ModeNote = document.getElementById("part3ModeNote");
+  var exampleBanner = document.getElementById("exampleBanner");
+  if (autofillBtn && backToOwnBtn){
+    autofillBtn.addEventListener("click", function(){
+      /* capture whatever is currently typed before switching away from own data */
+      if (part3Mode === "own"){
+        [domCalcEl, nondomCalcEl].forEach(function(c){
+          var pre = snapshotFormValues(c);
+          Object.keys(pre).forEach(function(id){ if (pre[id] !== "") ownAnswerSnapshot[id] = pre[id]; });
+        });
+      }
+      part3Mode = "example";
+      autofillBtn.style.display = "none";
+      backToOwnBtn.style.display = "";
+      part3ModeNote.textContent = "Showing a fully worked example with sample data — not your own numbers.";
+      exampleBanner.style.display = "block";
+      runPart3();
+    });
+    backToOwnBtn.addEventListener("click", function(){
+      part3Mode = "own";
+      backToOwnBtn.style.display = "none";
+      autofillBtn.style.display = "";
+      part3ModeNote.textContent = "Not able to finish, or short on time? See a fully worked example using sample data instead of your own.";
+      exampleBanner.style.display = "none";
+      runPart3();
+    });
+  }
+
+  /* ---------- Part 2 example-data mode ---------- */
+  var part2Mode = "own"; // "own" | "example"
+  var previousPart2Mode = "own";
+  function runPart2(){
+    buildConceptA();
+    buildConceptB();
+    previousPart2Mode = part2Mode;
+  }
+  var autofillBtn2 = document.getElementById("autofillBtn2");
+  var backToOwnBtn2 = document.getElementById("backToOwnBtn2");
+  var part2ModeNote = document.getElementById("part2ModeNote");
+  var exampleBanner2 = document.getElementById("exampleBanner2");
+  if (autofillBtn2 && backToOwnBtn2){
+    autofillBtn2.addEventListener("click", function(){
+      /* capture whatever is currently typed before switching away from own data */
+      if (part2Mode === "own"){
+        ["conceptA","conceptB"].forEach(function(id){
+          var pre = snapshotFormValues(document.getElementById(id));
+          Object.keys(pre).forEach(function(k){ if (pre[k] !== "") ownConceptSnapshot[k] = pre[k]; });
+        });
+      }
+      part2Mode = "example";
+      autofillBtn2.style.display = "none";
+      backToOwnBtn2.style.display = "";
+      part2ModeNote.textContent = "Showing a fully worked example with sample data — not your own numbers.";
+      exampleBanner2.style.display = "block";
+      runPart2();
+    });
+    backToOwnBtn2.addEventListener("click", function(){
+      part2Mode = "own";
+      backToOwnBtn2.style.display = "none";
+      autofillBtn2.style.display = "";
+      part2ModeNote.textContent = "Not able to finish, or short on time? See a fully worked example using sample data instead of your own.";
+      exampleBanner2.style.display = "none";
+      runPart2();
+    });
   }
 
   /* ---------- number line ---------- */
@@ -1054,8 +1304,7 @@
   });
 
   /* ---------- init ---------- */
-  buildConceptA();
-  buildConceptB();
+  runPart2();
   buildPart4();
   buildTTable();
   onNChange();
